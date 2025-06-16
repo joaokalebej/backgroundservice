@@ -11,7 +11,7 @@ public class OperacoesBancariasService : IOperacoesBancariasServices
     public async Task ExecutarBaixaAutomatica()
     {
         var i = 0;
-        while (i < 100)
+        while (i < 20)
         {
             Console.WriteLine($"Processando baixa automática: {i}");
             Thread.Sleep(1000);
@@ -22,6 +22,13 @@ public class OperacoesBancariasService : IOperacoesBancariasServices
 
     public async Task GerarBoleto()
     {
-        throw new NotImplementedException();
+        var i = 0;
+        while (i < 20)
+        {
+            Console.WriteLine($"Processando geração de boleto: {i}");
+            Thread.Sleep(1000);
+            Console.WriteLine($"Boleto número {i} gerado com sucesso.");
+            i++;
+        }
     }
 }

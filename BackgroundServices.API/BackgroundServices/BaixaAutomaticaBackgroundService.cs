@@ -1,4 +1,5 @@
-﻿using BackgroundServices.API.Services.Interfaces;
+﻿using BackgroundServices.API.Semaphores;
+using BackgroundServices.API.Services.Interfaces;
 
 namespace BackgroundServices.API.BackgroundServices;
 
@@ -25,6 +26,9 @@ public class BaixaAutomaticaBackgroundService : BackgroundService
         {
             using var scope = _serviceProvider.CreateScope();
             var baixaAutomaticaService = scope.ServiceProvider.GetRequiredService<IOperacoesBancariasServices>();
+
+            await SemaphoreBackgroundServiceController.UseResourceAsync(); //Adquirindo o semáforo.
+            
             await baixaAutomaticaService.ExecutarBaixaAutomatica();
         }
         catch (Exception e)
@@ -33,6 +37,7 @@ public class BaixaAutomaticaBackgroundService : BackgroundService
         }
         finally
         {
+            SemaphoreBackgroundServiceController.ReleaseResource(); //Liberando o semáforo.
             await Task.Delay(TimeSpan.FromMinutes(1));
         }
     }

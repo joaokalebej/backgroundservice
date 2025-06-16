@@ -1,6 +1,7 @@
 using BackgroundServices.API.BackgroundServices;
 using BackgroundServices.API.Services;
 using BackgroundServices.API.Services.Interfaces;
+using DefaultNamespace;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -13,6 +14,7 @@ builder.Services.AddScoped<IOperacoesBancariasServices, OperacoesBancariasServic
 
 //Background Services
 builder.Services.AddHostedService<BaixaAutomaticaBackgroundService>();
+builder.Services.AddHostedService<GerarBoletoBackgroundService>();
 
 var app = builder.Build();
 

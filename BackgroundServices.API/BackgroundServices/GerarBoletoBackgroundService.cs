@@ -1,4 +1,7 @@
-﻿namespace DefaultNamespace;
+﻿using BackgroundServices.API.Semaphores;
+using BackgroundServices.API.Services.Interfaces;
+
+namespace DefaultNamespace;
 
 public class GerarBoletoBackgroundService : BackgroundService
 {
@@ -8,13 +11,34 @@ public class GerarBoletoBackgroundService : BackgroundService
         _serviceProvider = serviceProvider;
     }
     
-    protected override Task ExecuteAsync(CancellationToken stoppingToken)
+    protected override async Task ExecuteAsync(CancellationToken stoppingToken)
     {
         while (!stoppingToken.IsCancellationRequested)
         {
-            ProcessarGeracaoBoleto(stoppingToken);
+            await ProcessarGeracaoBoleto(stoppingToken);
         }
     }
-    
-    
+
+    private async Task ProcessarGeracaoBoleto(CancellationToken stoppingToken)
+    {
+        try
+        {
+            using var scope = _serviceProvider.CreateScope();
+            var boletoService = scope.ServiceProvider.GetRequiredService<IOperacoesBancariasServices>();
+
+            await SemaphoreBackgroundServiceController.UseResourceAsync();
+            
+            boletoService.GerarBoleto();
+        }
+        catch (Exception e)
+        {
+            throw;
+        }
+        finally
+        {
+            SemaphoreBackgroundServiceController.ReleaseResource();
+            await Task.Delay(TimeSpan.FromMinutes(1));
+        }
+        
+    }
 }
